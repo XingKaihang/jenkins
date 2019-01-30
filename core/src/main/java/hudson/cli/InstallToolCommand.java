@@ -48,7 +48,9 @@ import org.kohsuke.args4j.Argument;
  * Performs automatic tool installation on demand.
  *
  * @author Kohsuke Kawaguchi
+ * @deprecated Limited to Remoting-based protocol.
  */
+@Deprecated
 @Extension
 public class InstallToolCommand extends CLICommand {
     @Argument(index=0,metaVar="KIND",usage="The type of the tool to install, such as 'Ant'")
@@ -76,11 +78,11 @@ public class InstallToolCommand extends CLICommand {
             throw new IllegalStateException("No such job found: "+id.job);
         p.checkPermission(Item.CONFIGURE);
 
-        List<String> toolTypes = new ArrayList<String>();
+        List<String> toolTypes = new ArrayList<>();
         for (ToolDescriptor<?> d : ToolInstallation.all()) {
             toolTypes.add(d.getDisplayName());
             if (d.getDisplayName().equals(toolType)) {
-                List<String> toolNames = new ArrayList<String>();
+                List<String> toolNames = new ArrayList<>();
                 for (ToolInstallation t : d.getInstallations()) {
                     toolNames.add(t.getName());
                     if (t.getName().equals(toolName))

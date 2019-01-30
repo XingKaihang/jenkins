@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
 import java.io.File;
@@ -40,14 +39,16 @@ import jenkins.model.Jenkins;
 import hudson.slaves.DumbSlave;
 import hudson.slaves.OfflineCause;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.jvnet.hudson.test.SmokeTest;
 import org.jvnet.hudson.test.recipes.LocalData;
 
+@Category(SmokeTest.class)
 public class ComputerTest {
 
     @Rule public JenkinsRule j = new JenkinsRule();
@@ -114,4 +115,17 @@ public class ComputerTest {
         assertThat(content, not(containsString("ApiTokenProperty")));
         assertThat(content, not(containsString("apiToken")));
     }
+
+    @Issue("JENKINS-42969")
+    @Test
+    public void addAction() throws Exception {
+        Computer c = j.createSlave().toComputer();
+        class A extends InvisibleAction {}
+        assertEquals(0, c.getActions(A.class).size());
+        c.addAction(new A());
+        assertEquals(1, c.getActions(A.class).size());
+        c.addAction(new A());
+        assertEquals(2, c.getActions(A.class).size());
+    }
+
 }
